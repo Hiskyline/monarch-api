@@ -4,7 +4,7 @@ from supabase import create_client
 
 app = Flask(__name__)
 # Replace these with your actual Supabase credentials
-supabase = create_client("YOUR_SUPABASE_URL", "YOUR_SUPABASE_SERVICE_ROLE_KEY")
+supabase = create_client("https://iwxstkhfvfpfaxcniegt.supabase.co", "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eHN0a2hmdmZwZmF4Y25pZWd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzA3ODY1NCwiZXhwIjoyMDg4NjU0NjU0fQ.8xAOZd2XSG6O575OZ3z6K9LarcnzdsGGVxYmSWewFtk")
 
 @app.route('/api/learn', methods=['POST'])
 def learn():
