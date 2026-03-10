@@ -1,4 +1,4 @@
 flask
 supabase
-flask-cors
 gunicorn
+python-dotenv
