@@ -5,8 +5,8 @@ import os
 app = Flask(__name__)
 
 # Credentials should be fetched from Environment Variables for security
-SUPABASE_URL = os.environ.get("https://iwxstkhfvfpfaxcniegt.supabase.co", "https://iwxstkhfvfpfaxcniegt.supabase.co")
-SUPABASE_KEY = os.environ.get("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Iml3eHN0a2hmdmZwZmF4Y25pZWd0Iiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc3MzA3ODY1NCwiZXh") # Ensure this is set in Render
+SUPABASE_URL = os.environ.get("SUPABASE_URL", "https://iwxstkhfvfpfaxcniegt.supabase.co")
+SUPABASE_KEY = os.environ.get("SUPABASE_KEY") # Ensure this is set in Render
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
 # 1. Root route to prevent 404 Not Found
