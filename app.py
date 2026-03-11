@@ -7,10 +7,6 @@ import random
 app = Flask(__name__)
 CORS(app)
 
-# -------------------------
-# Supabase Setup
-# -------------------------
-
 SUPABASE_URL = os.environ.get(
     "SUPABASE_URL",
     "https://iwxstkhfvfpfaxcniegt.supabase.co"
@@ -20,12 +16,11 @@ SUPABASE_KEY = os.environ.get("SUPABASE_KEY")
 
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# -------------------------
-# Helpers
-# -------------------------
-
 GRID_SIZE = 25
 SAFE_TILES = 5
+
+# remember last prediction
+last_prediction = None
 
 
 def fetch_games(limit=1000):
@@ -38,6 +33,10 @@ def fetch_games(limit=1000):
 
     return response.data or []
 
+
+# -------------------------
+# AI MODEL (frequency learning)
+# -------------------------
 
 def frequency_model(games):
 
@@ -54,10 +53,18 @@ def frequency_model(games):
 
     indexed = list(enumerate(counts))
 
-    safest = sorted(indexed, key=lambda x: x[1])[:SAFE_TILES]
+    ranked = sorted(indexed, key=lambda x: x[1])
 
-    return [x[0] for x in safest]
+    # take safest 10 instead of 5
+    safest_pool = [x[0] for x in ranked[:10]]
 
+    # choose 5 randomly from safest pool
+    return random.sample(safest_pool, SAFE_TILES)
+
+
+# -------------------------
+# NEURAL MODEL (pattern weighting)
+# -------------------------
 
 def neural_pattern_model(games):
 
@@ -73,10 +80,16 @@ def neural_pattern_model(games):
 
     indexed = list(enumerate(pattern_score))
 
-    safest = sorted(indexed, key=lambda x: x[1])[:SAFE_TILES]
+    ranked = sorted(indexed, key=lambda x: x[1])
 
-    return [x[0] for x in safest]
+    pool = [x[0] for x in ranked[:12]]
 
+    return random.sample(pool, SAFE_TILES)
+
+
+# -------------------------
+# QUANTUM MODEL
+# -------------------------
 
 def quantum_model():
 
@@ -88,7 +101,7 @@ def quantum_model():
 
 
 # -------------------------
-# Routes
+# ROUTES
 # -------------------------
 
 @app.route("/")
@@ -126,6 +139,8 @@ def learn():
 @app.route("/api/predict")
 def predict():
 
+    global last_prediction
+
     try:
 
         mode = request.args.get("mode", "ai")
@@ -147,6 +162,12 @@ def predict():
         else:
 
             result = frequency_model(games)
+
+        # anti repeat
+        if result == last_prediction:
+            random.shuffle(result)
+
+        last_prediction = result
 
         return jsonify(result)
 
